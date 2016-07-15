@@ -1,0 +1,70 @@
+<?php 
+	$this->headScript()->appendFile(BASE_URL . "static/js/zf/email/manage/list.js?v=2");
+//	$this->headScript()->appendFile(BASE_URL . "static/js/tinymce/4.1.5/tinymce.min.js");
+	
+	$this->headLink()->appendStylesheet(BASE_URL . "static/css/zf/email/manage/list.css?v=2");
+?>
+
+<div id="show_emails_table_wrap">
+	
+	<div class="btn-group" style="width:100%;">
+		<button class="btn btn-primary" style="width:25%; margin-bottom: 10px;" onclick="bbe_bugs_show_logout_menu();">
+			<span class="glyphicon glyphicon-envelope"></span> Inbox [<?php echo Bugs_Auth_Session::getIdentity()->nickname; ?>]
+			-
+			<span class="glyphicon glyphicon-time"></span> [<?php echo Bugs_Auth_Session::getTimezone(); ?>]
+		</button>
+		<button class="btn btn-primary" style="width:25%; margin-bottom: 10px;" onclick="bbe_bugs_show_email_list();">
+			<span class="glyphicon glyphicon-refresh"></span> Refresh
+		</button>
+		<button class="btn btn-primary" style="width:25%; margin-bottom: 10px;" onclick="bbe_bugs_compose_new_email();">
+			<span class="glyphicon glyphicon-envelope"></span> Compose
+		</button>
+		<button id="bbe_bugs_delete_multi_emails_btn" class="btn" style="width:25%; margin-bottom: 10px;" onclick="bbe_bugs_delete_multi_emails();">
+			<span class="glyphicon glyphicon-trash"></span> Delete <span id="bbe_bugs_delete_multi_emails_label"></span>
+		</button>
+	</div>
+	<table id="show_emails_table" class="display" cellspacing="0" style="cursor:pointer; width: 98%!important;">
+		<?php foreach (array("head", "foot") as $k): ?>
+			<t<?php echo $k; ?>>
+				<tr>
+					<th style="min-width:100px; text-align: right; padding-right: 20px;">Time ago</th>
+					<th>From</th>
+					<th>Subject</th>
+					<th> </th>
+					<th>Paper</th>
+					<th>Assigned</th>
+					<th>Deadline</th>
+					<th>Pr</th>
+				</tr>
+			</t<?php echo $k; ?>>
+		<?php endforeach; ?>
+		<tbody></tbody>
+	</table>
+	
+	<hr>
+	
+	<button class="btn btn-primary" style="width:100%; margin-bottom: 10px;">
+		<span class="glyphicon glyphicon-trash"></span> Deleted emails
+	</button>
+	<table id="show_deleted_emails_table" class="display" cellspacing="0" style="cursor:pointer; width: 98%!important;">
+		<?php foreach (array("head", "foot") as $k): ?>
+			<t<?php echo $k; ?>>
+				<tr>
+					<th style="min-width:60px;">Time ago</th>
+					<th>From</th>
+					<th>Subject</th>
+					<th> </th>
+					<th>Paper</th>
+					<th>Deleted</th>
+				</tr>
+			</t<?php echo $k; ?>>
+		<?php endforeach; ?>
+		<tbody></tbody>
+	</table>
+	
+</div>
+
+<div id="show_email_full_wrap" style="display: none;"></div>
+
+<input type="hidden" id="autoload_email_id" value="<?php echo $this->autoload_email_id; ?>">
+

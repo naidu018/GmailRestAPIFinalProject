@@ -1,0 +1,143 @@
+#main_wrap {
+	font-family: arial;
+	font-size: 12px;
+} 
+
+.add-contact-btn {
+	min-width: 60px;
+}
+
+.ellipsis {
+	width: 175px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.bbe_bugs_email_subject {
+	font-size: 15px;
+	overflow: hidden;
+}
+
+.bbe_bugs_email_field {
+	border-top: 1px #ccc solid;
+	padding: 5px 1px;
+	margin: 5px 1px;
+}
+
+
+#show_deleted_emails_table tr  td:nth-child(3) {
+	text-decoration: line-through;
+}
+
+.bbe_bugs_email_field pre {
+	margin: 15px;
+}
+
+#bbe_bugs_reply_wrap {
+	padding: 0 15px;
+}
+
+#bbe_bugs_reply_wrap textarea {
+	width: 100%;
+	height: 300px;
+}
+
+#show_emails_table_wrap {
+	margin: 5px;
+}
+
+#show_emails_table tbody tr {
+	font-size: 13px;
+	color: #777;
+}
+
+#show_emails_table tbody tr.is_not_read,
+#show_emails_table tbody tr.is_assigned {
+	font-weight: bold;
+	font-size: 14px;
+	color: #444;
+}
+
+#show_emails_table td {
+	vertical-align: middle;
+}
+
+#show_emails_table tr td:first-child span {
+	padding-top: 4px;
+}
+
+#show_emails_table tr td:first-child {
+	border-left: 9px solid transparent;
+}
+
+#show_emails_table tr.danger td:first-child {
+	border-left: 9px solid #d9534f;
+}
+
+#show_emails_table tr.warning td:first-child {
+	border-left: 9px solid #f0ad4e;
+}
+
+
+#show_emails_table tr td:last-child {
+	text-align: center;
+}
+
+
+
+td.last-email-not-read {
+	border-bottom: 2px solid #bbb;
+}
+
+.glyphicon.danger {
+	color: #d9534f;
+}
+.glyphicon.danger:hover {
+	color: #c9302c;
+}
+
+.priority-switch {
+	font-size: 17px;
+	padding-top: 2px;
+}
+
+.glyphicon.off {
+	color: #ddd;
+}
+.glyphicon.off:hover {
+	color: #ccc;
+}
+
+
+.glyphicon.warning {
+	color: orange;
+}
+
+#show_emails_table tr td .right {
+	float: right;
+	margin-right: 4px;
+}
+
+#bbe_bugs_email_subject_span {
+	font-size: 18px;
+	font-weight: bold;
+}
+
+/*************************/
+/* OVERWRITING BOOTSTRAP */
+/*************************/
+h1, .h1, h2, .h2, h3, .h3 {
+	margin-top: 10px;
+	margin-bottom: 5px;
+}
+
+#bbe_bugs_email_original_message_wrap h5 {
+	background-color: #ddd;
+	padding: 10px 10px;
+	border-radius: 4px;
+}
+
+.bbe_bugs_email_body_no_border {
+	border: none;
+	background: none;
+}

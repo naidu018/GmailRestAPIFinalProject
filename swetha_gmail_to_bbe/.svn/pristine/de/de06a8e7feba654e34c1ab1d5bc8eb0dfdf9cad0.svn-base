@@ -1,0 +1,42 @@
+<?php
+
+	$static_version = 9;
+
+	// Meta
+	$this->headMeta()->appendHttpEquiv('Content-Type', 'text/html;charset=utf8'); 
+	$this->headMeta()->appendHttpEquiv('X-UA-Compatible', 'IE=EDGE');
+	
+	// JS
+	
+	$this->headScript()->prependFile(STATIC_BASE_URL . "bbe_autocomplete/0.0.1/js/bbe_autocomplete.js?v=" . $static_version);
+	$this->headScript()->prependFile(STATIC_BASE_URL . "bootstrap-timepicker/0.2.6/js/bootstrap-timepicker.min.js?v=" . $static_version);
+	$this->headScript()->prependFile(STATIC_BASE_URL . "bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js?v=" . $static_version);
+	$this->headScript()->prependFile(STATIC_BASE_URL . "chosen/1.2.0/chosen.jquery.min.js?v=" . $static_version);
+	$this->headScript()->prependFile(STATIC_BASE_URL . "poshytip/1.2/jquery.poshytip.min.js?v=" . $static_version);
+	$this->headScript()->prependFile(BASE_URL . "static/js/zf/_common/index.js?v=" . $static_version);
+	$this->headScript()->prependFile(STATIC_BASE_URL . "datatables/1.10.2/js/dataTables.bootstrap.js?v=" . $static_version);
+	$this->headScript()->prependFile(STATIC_BASE_URL . "datatables/1.10.2/js/jquery.dataTables.min.js?v=" . $static_version);
+	$this->headScript()->prependFile(STATIC_BASE_URL . "tinymce/4.1.5/tinymce.min.js?v=" . $static_version);
+	$this->headScript()->prependFile(STATIC_BASE_URL . "jquery/1.11.1/jquery.min.js?v=" . $static_version);
+	
+	// CSS
+	$this->headLink()->prependStylesheet(STATIC_BASE_URL . "bbe_autocomplete/0.0.1/css/bbe_autocomplete.css?v=" . $static_version);
+	$this->headLink()->prependStylesheet(STATIC_BASE_URL . "bootstrap-timepicker/0.2.6/css/bootstrap-timepicker.min.css?v=" . $static_version);
+	$this->headLink()->prependStylesheet(STATIC_BASE_URL . "bootstrap-datepicker/1.3.0/css/datepicker3.css?v=" . $static_version);
+	$this->headLink()->prependStylesheet(STATIC_BASE_URL . "chosen/1.2.0/chosen.min.css?v=" . $static_version);
+	$this->headLink()->prependStylesheet(STATIC_BASE_URL . "poshytip/1.2/tip-twitter/tip-twitter.css?v=" . $static_version);
+	$this->headLink()->prependStylesheet(STATIC_BASE_URL . "datatables/1.10.2/css/dataTables.bootstrap.css?v=" . $static_version);
+	$this->headLink()->prependStylesheet(STATIC_BASE_URL . "datatables/1.10.2/css/jquery.dataTables.min.css?v=" . $static_version);
+	$this->headLink()->prependStylesheet(STATIC_BASE_URL . "bootstrap/3.2.0/css/awesome-bootstrap-checkbox.css?v=" . $static_version);
+	$this->headLink()->prependStylesheet(STATIC_BASE_URL . "bootstrap/3.2.0/css/bootstrap.min.css?v=" . $static_version);
+	$this->headLink()->prependStylesheet(BASE_URL . "static/css/reset.css?v=" . $static_version);
+
+	
+	
+	
+	
+	
+	
+	
+	
+	

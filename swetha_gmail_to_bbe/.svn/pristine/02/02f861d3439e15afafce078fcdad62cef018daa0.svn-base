@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<?php $this->render("box/header.phtml"); ?>
+		<title><?php echo $this->page_title; ?></title>
+		<script type="text/javascript">var BASE_URL = "<?php echo BASE_URL; ?>"</script>
+		<?php echo $this->headMeta(); ?>
+		<?php echo $this->headLink().PHP_EOL; ?>
+		<?php echo $this->headScript().PHP_EOL; ?>
+	</head>
+	<body>
+		<div id="main_wrap">
+			<?php echo $this->layout()->content; ?>
+			<div id="notification_wrap" style="position:fixed;bottom:0px;width:100%;"></div>
+		</div>
+		<script type="text/javascript" src="<?php echo STATIC_BASE_URL; ?>bootstrap/3.2.0/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="<?php echo STATIC_BASE_URL; ?>bootstrap/3.2.0/js/bootbox.min.js"></script>
+	</body>
+</html>

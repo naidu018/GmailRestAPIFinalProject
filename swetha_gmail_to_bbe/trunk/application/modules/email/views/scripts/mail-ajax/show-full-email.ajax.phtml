@@ -1,0 +1,389 @@
+<?php 
+//	Zend_Debug::dump($this->showMmails_MODEL->__toArray()); exit;
+?>
+
+<div class="navbar navbar-default" role="navigation">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+		</div>
+	
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<div class="nav navbar-nav btn-group"  style="width: 100%;">
+					<button class="btn btn-primary navbar-btn col-xs-12 col-md-1" onclick="bbe_bugs_show_email_list();">
+						<span class="glyphicon glyphicon-chevron-left"></span> Back
+					</button>
+					
+					<button class="btn btn-primary navbar-btn col-xs-12 col-md-1" onclick="$('#bbe_bugs_email_log').toggle();">
+						<span class="glyphicon glyphicon-list"></span> Log
+					</button>
+					
+				<?php if(!$this->showMmails_MODEL->time_read): ?>
+					<button class="btn btn-primary navbar-btn col-xs-12 col-md-2" onclick="bbe_bugs_email_delete(<?php echo $this->showMmails_MODEL->id; ?>);">
+						<span class="glyphicon glyphicon-trash"></span> Delete
+					</button>
+				<?php else: ?>
+					<button class="btn btn-primary navbar-btn col-xs-12 col-md-2" onclick="bbe_bugs_email_undelete(<?php echo $this->showMmails_MODEL->id; ?>);">
+						<span class="glyphicon glyphicon-remove-sign"></span> Undelete
+					</button>
+				<?php endif; ?>
+				
+				<?php if(!$this->showMmails_MODEL->assigntime): ?>
+					<button class="btn btn-primary navbar-btn col-xs-12 col-md-4" onclick="bbe_bugs_email_read(<?php echo $this->showMmails_MODEL->id; ?>);">
+						<span class="glyphicon glyphicon-ok"></span> Mark as read [<?php echo Bugs_Auth_Session::getIdentity()->nickname; ?>]
+					</button>
+				<?php else: ?>
+					<button class="btn btn-primary navbar-btn col-xs-12 col-md-4" onclick="bbe_bugs_email_unread(<?php echo $this->showMmails_MODEL->id; ?>);">
+						<span class="glyphicon glyphicon-remove"></span> Mark as unread [<?php echo Bugs_Auth_Session::getIdentity()->nickname; ?>]
+					</button>
+				<?php endif; ?>
+					<button id="bbe_bugs_email_reply_btn" class="btn <?php echo ($this->showMmails_MODEL->assign_psetup) ? "btn-primary" : ""; ?> navbar-btn col-xs-12 col-md-2" onclick="bbe_bugs_email_reply(<?php echo $this->showMmails_MODEL->id; ?>);">
+						<span class="glyphicon glyphicon-share-alt"></span> Reply
+					</button>
+					<button id="bbe_bugs_email_fwd_btn" class="btn <?php echo ($this->showMmails_MODEL->assign_psetup) ? "btn-primary" : ""; ?> navbar-btn col-xs-12 col-md-2" onclick="bbe_bugs_email_forward(<?php echo $this->showMmails_MODEL->id; ?>);">
+						<span class="glyphicon glyphicon-arrow-right"></span> Fwd
+					</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<div>
+	
+	<pre id="bbe_bugs_email_log" style="display:none;"><button class="btn btn-primary" style="position: fixed; top: 52px; right: 10px;" onclick="$('#bbe_bugs_email_log').toggle();">hide</button><?php echo utf8_decode($this->showMmails_MODEL->log); ?></pre>
+	
+	<div id="bbe_bugs_email_fields_top">
+		<div class="bbe_bugs_email_field">
+			<span class="glyphicon glyphicon-user"></span>
+			<strong>FROM</strong>:
+			<span id="bbe_bugs_email_from_holder"><?php echo htmlentities(trim($this->showMmails_MODEL->from, ",")); ?></span>
+			<div style="float:right; padding: 0 10px;">
+			
+				<button class="btn btn-xs btn-primary" id="copy-to-clipboard-btn" onclick="$('#copy-to-clipboard').select(); document.execCommand('copy');">
+					Copy full message
+				</button>
+				
+				<textarea style="position:absolute; top: -200px; left: -200px;" id="copy-to-clipboard">FROM: <?php echo htmlentities($this->showMmails_MODEL->from); ?> 
+CC: <?php echo htmlentities($this->showMmails_MODEL->cc); ?> 
+DATE: <?php echo date("D, d M H:i:s", $this->showMmails_MODEL->time); ?> 
+SUBJECT: <?php echo $this->showMmails_MODEL->subject; ?> 
+
+<?php
+	$html2text = new Bugs_Common_HtmlTotext();
+	$html2text->html = $this->showMmails_MODEL->text;
+	$html2text->width = 150;
+	echo trim($html2text->get_text());
+?></textarea>
+			
+				<button class="btn btn-xs <?php echo  ((time() - $this->showMmails_MODEL->time) > 3600) ? "btn-danger" : "btn-primary"; ?>">
+					<span class="glyphicon glyphicon-time"></span>
+					<?php echo date("D, d M H:i:s", $this->showMmails_MODEL->time); ?>
+					[<?php echo Bugs_Common_Date::howManyUnitsAgo($this->showMmails_MODEL->time); ?> ago]
+				</button>
+			</div>
+		</div>
+		<?php if($this->showMmails_MODEL->cc): ?>
+			<div class="bbe_bugs_email_field">
+				<span class="glyphicon glyphicon-user"></span>
+				<strong>CC</strong>: <?php echo htmlentities($this->showMmails_MODEL->cc); ?>
+			</div>
+		<?php endif; ?>
+		<div class="bbe_bugs_email_subject bbe_bugs_email_field">
+			<h5 style="float: left;">
+				<span class="glyphicon glyphicon-envelope"></span>
+				SUBJECT: <span id="bbe_bugs_email_subject_span"><?php echo $this->showMmails_MODEL->subject; ?></span>
+			</h5>
+			
+			
+			<span style="float:right;" class="form-inline">
+			
+				<button class="btn btn-default <?php /* echo ($this->showMmails_MODEL->deadline_type == Email_Model_DeadlineType::_1_RESET) ? "btn-danger" : "btn-default" */ ?> btn-xs" type="button" onclick="bbe_bugs_set_deadline_ajax('reset');">
+					<span class="glyphicon glyphicon-remove-circle"></span> None
+				</button>
+			
+			
+				<button class="btn <?php echo ($this->showMmails_MODEL->deadline_type == Email_Model_DeadlineType::_1_URGENT_30_m) ? "btn-danger" : "btn-default" ?> btn-xs" type="button" onclick="bbe_bugs_set_deadline_ajax(1800);">
+					<span class="glyphicon glyphicon-fire"></span> urgent (+30m)
+				</button>
+				<button class="btn <?php echo ($this->showMmails_MODEL->deadline_type == Email_Model_DeadlineType::_2_ASAP_1_h) ? "btn-warning" : "btn-default" ?> btn-xs" type="button" onclick="bbe_bugs_set_deadline_ajax(3600);">
+					<span class="glyphicon glyphicon-flash"></span> ASAP (+1h)
+				</button>
+				<button class="btn <?php echo ($this->showMmails_MODEL->deadline_type == Email_Model_DeadlineType::_3_DEFAULT_3_h) ? "btn-info" : "btn-default" ?> btn-xs" type="button" onclick="bbe_bugs_set_deadline_ajax(10800);">
+					<span class="glyphicon glyphicon-leaf"></span> When I have time (+3h)
+				</button>
+				<!--
+				<button class="btn <?php echo ($this->showMmails_MODEL->deadline_type == Email_Model_DeadlineType::_4_POST_PUB) ? "btn-info" : "btn-default" ?> btn-xs" type="button" onclick="bbe_bugs_set_deadline_ajax('post_pub');">
+					<span class="glyphicon glyphicon-book"></span> Post-pub
+				</button>
+				-->
+				<button class="btn <?php echo ($this->showMmails_MODEL->deadline_type == Email_Model_DeadlineType::_5_AFTER_PROD) ? "btn-info" : "btn-default" ?> btn-xs" type="button" onclick="bbe_bugs_set_deadline_ajax('after_prod');">
+					<span class="glyphicon glyphicon-play"></span> After prod (5PM)
+				</button>
+				<button class="btn <?php echo ($this->showMmails_MODEL->deadline_type == Email_Model_DeadlineType::_6_NEXT_SHIFT) ? "btn-primary" : "btn-default" ?> btn-xs" type="button" onclick="bbe_bugs_set_deadline_ajax('next_shift');">
+					<span class="glyphicon glyphicon-forward"></span> Next shift
+				</button>
+				
+				<button class="btn <?php echo ($this->showMmails_MODEL->deadline_type == Email_Model_DeadlineType::_8_NEVER) ? "btn-success" : "btn-default" ?> btn-xs" type="button" onclick="bbe_bugs_set_deadline_ajax('never');">
+					<span class="glyphicon glyphicon-ban-circle"></span> Never
+				</button>
+				
+				<button class="btn <?php echo ($this->showMmails_MODEL->deadline_type == Email_Model_DeadlineType::_7_CUSTOM) ? "btn-primary" : "btn-default" ?> btn-xs" type="button" onclick="bbe_bugs_set_deadline();">
+					<span class="glyphicon glyphicon-calendar"></span> Custom
+				</button>
+				
+				<span id="bbe_bugs_set_deadline_input_option_custom_wrap" style="padding-left: 4px; display:none; float:right;">
+					<span class="input-group" style="width: 130px;">
+						<input class="form-control input-sm" id="bbe_bugs_set_deadline_input_option_custom_date" value="<?php echo date("Y-m-d"); ?>">
+						<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+					</span>
+					<span class="input-group" style="width: 120px;">
+						<input class="form-control input-sm" id="bbe_bugs_set_deadline_input_option_custom_time" value="<?php echo date("H:i"); ?>">
+						<span class="input-group-addon"><span class="glyphicon glyphicon-time"></span></span>
+					</span>
+					<button class="btn btn-success btn-xs" type="button" onclick="bbe_bugs_set_deadline_ajax('custom');"><span class="glyphicon glyphicon-ok"></span></button>
+				</span>
+				
+				
+			</span>
+			
+			
+		</div>
+		
+		<div class="bbe_bugs_email_field">
+			<div>
+				<span class="glyphicon glyphicon-book"></span> <strong>Assigned Paper</strong>:
+				
+				<span id="bbe_bugs_email_assign_paper_name_warp">
+					<?php echo ($this->showMmails_MODEL->assign_psetup) ? $this->showMmails_MODEL->assign_psetup : "-"; ?>
+				</span>
+				
+				<span style="float:right;" class="form-inline">
+					<span id="bbe_bugs_pubb_assign_ext_wrap" style="display: none;">
+						<button class="btn btn-danger btn-xs" type="button" onclick="bbe_bugs_hide_pubbs_from_bbe();"><span class="glyphicon glyphicon-remove"></span></button>
+						<span id="bbe_bugs_pubb_assign_wrap"></span>
+						<button class="btn btn-success btn-xs" type="button" onclick="bbe_bugs_confirm_pubb_from_bbe();"><span class="glyphicon glyphicon-ok"></span></button>
+					</span>
+					<button class="btn <?php echo ($this->showMmails_MODEL->assign_psetup) ? "" : "btn-primary"; ?> btn-xs" id="bbe_bugs_pubb_find_btn" onclick="bbe_bugs_get_pubbs_from_bbe();"><span class="glyphicon glyphicon-search"></span> Find a paper</button>
+					<img alt="" src="<?php echo BASE_URL; ?>static/img/icons/loader.gif" style="display: none; height: 22px;" id="bbe_bugs_pubb_loading_wheel">
+				</span>
+			</div>
+			<?php if($this->showMmails_MODEL->assigntime): ?>
+				<div>
+					<span class="glyphicon glyphicon-user"></span> <strong>Assigned to</strong>: <?php echo ($this->showMmails_MODEL->assignuser) ? $this->showMmails_MODEL->assignuser : "-"; ?>
+					<?php echo ($this->showMmails_MODEL->assigntime) ? " [" . date("D, d M H:i:s", $this->showMmails_MODEL->assigntime) ."]" : ""; ?>
+				</div>
+			<?php endif; ?>
+			
+			<?php if($this->showMmails_MODEL->deadline): ?>
+				<div>
+					<span class="glyphicon glyphicon-time"></span>
+					<strong>Deadline</strong>:
+					<?php echo ($this->showMmails_MODEL->deadline != -1) ? date("D, d M H:i:s", $this->showMmails_MODEL->deadline) : "Never"; ?>
+				</div>
+			<?php endif; ?>
+			
+			<?php if($this->showMmails_MODEL->time_read): ?>
+				<div>
+					<span class="glyphicon glyphicon-user"></span> <strong>Deleted by</strong>: <?php echo ($this->showMmails_MODEL->user) ? $this->showMmails_MODEL->user : "-"; ?>
+					<?php echo ($this->showMmails_MODEL->time_read) ? " [" . date("D, d M H:i:s", $this->showMmails_MODEL->time_read) ."]" : ""; ?>
+				</div>
+			<?php endif; ?>
+		</div>
+	</div>
+	
+	<div class="bbe_bugs_email_field">
+		<div id="bbe_bugs_reply_wrap" style="display: none;">
+			<table style="width: 100%;">
+				<tr>
+					<td style="width: 60px; vertical-align: middle; text-align: center;"><label>Subject</label></td>
+					<td>
+						<div class="input-group">
+						
+							
+							<input id="bbe_bugs_email_subject_field" class="form-control" name="bbe_bugs_email_subject_field" type="text" 
+								value="RE:<?php echo htmlentities($this->showMmails_MODEL->subject); ?>">
+							
+							<span class="input-group-btn">
+								<button class="btn btn-primary" onclick="bbe_bugs_send_email();">Send</button>
+							</span>
+							
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td style="vertical-align: top;">
+						<button class="btn btn-success btn-xs add-contact-btn" onclick="$('#bbe_bugs_email_to_field_input').show().find('input').focus();">
+							<span class="glyphicon glyphicon-plus"></span>
+							<span>To</span>
+						</button>
+					</td>
+					<td>
+						<div class="input-group" id="bbe_bugs_email_to_field_input" style="display:none;">
+							<span class="input-group-addon">@</span>
+							<input type="text" class="form-control has-poshytip" id="bbe_bugs_email_to_field_input_text" placeholder="email@example.com (add an email and confirm)" title="Please insert a valid email address">
+							<span class="input-group-btn">
+								<button class="btn btn-danger" type="button" onclick="$('#bbe_bugs_email_to_field_input').hide();"><span class="glyphicon glyphicon-trash"></span></button>
+								<button class="btn btn-success" type="button" onclick="bbe_bugs_add_email_field_input('to');"><span class="glyphicon glyphicon-ok"></span></button>
+							</span>
+						</div>
+						<input id="bbe_bugs_email_to_field" name="bbe_bugs_email_to_field" type="text" value="<?php echo htmlentities($this->showMmails_MODEL->from); ?>" style="display: none;">
+						<input id="bbe_bugs_email_to_field_original" name="bbe_bugs_email_to_field_original" type="text" value="<?php echo htmlentities($this->showMmails_MODEL->from); ?>" style="display: none;">
+					</td>
+				</tr>
+				<tr>
+					<td style="vertical-align: top;">
+						<button class="btn btn-primary btn-xs add-contact-btn" onclick="$('#bbe_bugs_email_cc_field_input').show().find('input').focus();">
+							<span class="glyphicon glyphicon-plus"></span>
+							<span>CC</span>
+						</button>
+					</td>
+					<td>
+						<div class="input-group" id="bbe_bugs_email_cc_field_input" style="display:none;">
+							<span class="input-group-addon">@</span>
+							<input type="text" class="form-control has-poshytip" id="bbe_bugs_email_cc_field_input_text" placeholder="email@example.com (add an email and confirm)" title="Please insert a valid email address">
+							<span class="input-group-btn">
+								<button class="btn btn-danger" type="button" onclick="$('#bbe_bugs_email_cc_field_input').hide();"><span class="glyphicon glyphicon-trash"></span></button>
+								<button class="btn btn-success" type="button" onclick="bbe_bugs_add_email_field_input('cc');"><span class="glyphicon glyphicon-ok"></span></button>
+							</span>
+						</div>
+						<input id="bbe_bugs_email_cc_field" name="bbe_bugs_email_cc_field" type="text" value="<?php echo htmlentities($this->showMmails_MODEL->cc); ?>" style="display: none;">
+						<input id="bbe_bugs_email_cc_field_original" name="bbe_bugs_email_cc_field_original" type="text" value="<?php echo htmlentities($this->showMmails_MODEL->cc); ?>" style="display: none;">
+					</td>
+				</tr>
+				<tr>
+					<td style="vertical-align: top;">
+						<button class="btn btn-danger btn-xs add-contact-btn" onclick="$('#bbe_bugs_email_bcc_field_input').show().find('input').focus();">
+							<span class="glyphicon glyphicon-plus"></span>
+							<span>BCC</span>
+						</button>
+					</td>
+					<td>
+						<div class="input-group" id="bbe_bugs_email_bcc_field_input" style="display:none;">
+							<span class="input-group-addon">@</span>
+							<input type="text" class="form-control has-poshytip"  id="bbe_bugs_email_bcc_field_input_text" placeholder="email@example.com (add an email and confirm)" title="Please insert a valid email address">
+							<span class="input-group-btn">
+								<button class="btn btn-danger" type="button" onclick="$('#bbe_bugs_email_bcc_field_input').hide();"><span class="glyphicon glyphicon-trash"></span></button>
+								<button class="btn btn-success" type="button" onclick="bbe_bugs_add_email_field_input('bcc');"><span class="glyphicon glyphicon-ok"></span></button>
+							</span>
+						</div>
+						<input id="bbe_bugs_email_bcc_field" name="bbe_bugs_email_bcc_field" type="text" value="" style="display: none;">
+					</td>
+				</tr>
+			</table>
+			
+			<textarea></textarea>
+			
+			<button class="btn btn-primary" style="float:right; margin: 3px 0;" onclick="bbe_bugs_send_email();">Send</button>
+			<br style="clear:both;">
+			
+		</div>
+		<div id="bbe_bugs_email_original_message_wrap">
+		
+		
+			
+			<?php if(stristr($this->showMmails_MODEL->log, "(Operation: reply)")): ?>
+				
+				<?php
+					$log_operations = explode("<b>[", $this->showMmails_MODEL->log);
+					rsort($log_operations);
+				?>
+				
+				<?php foreach ($log_operations as $log_operation): ?>
+					<?php if(stristr($log_operation, "(Operation: reply)")): ?>
+					
+						<?php 
+							$reply_from_user = array();
+							preg_match("/User\:\s([A-Z]*)\s\(Operation\: reply\)/si", $log_operation, $reply_from_user);
+							
+							$reply_time = substr($log_operation, 0, 21);
+						?>
+						<h5>
+							<span class="glyphicon glyphicon-share-alt"></span> Reply from <?php echo $reply_from_user[1]; ?>:
+							<span style="float: right;"><?php echo $reply_time; ?> [GMT]</span>
+						</h5>
+						<?php 
+							$reply_text = array();
+							preg_match("/\(Operation\: reply\)(.*)Original message\:/s",$log_operation, $reply_text);
+						?>
+						<pre id="bbe_bugs_email_body" class="bbe_bugs_email_body_no_border"><?php echo $reply_text[1]; ?><!-- this protects from unclosed comments --></pre>
+						
+					<?php elseif(stristr($log_operation, "(Operation: forward)")): ?>
+					
+						<?php 
+							$reply_from_user = array();
+							preg_match("/User\:\s([A-Z]*)\s\(Operation\: forward\)/si", $log_operation, $reply_from_user);
+							
+							$reply_time = substr($log_operation, 0, 21);
+						?>
+						<h5>
+							<span class="glyphicon glyphicon-arrow-right"></span> Forwarded from <?php echo $reply_from_user[1]; ?>:
+							<span style="float: right;"><?php echo $reply_time; ?> [GMT]</span>
+						</h5>
+						<?php 
+							$reply_text = array();
+							preg_match("/\(Operation\: forward\)(.*)Original message\:/s",$log_operation, $reply_text);
+						?>
+						<pre id="bbe_bugs_email_body" class="bbe_bugs_email_body_no_border"><?php echo $reply_text[1]; ?><!-- this protects from unclosed comments --></pre>
+						
+					<?php endif; ?>
+				<?php endforeach; ?>
+				
+			<?php endif; ?>
+			
+		
+			<h5>
+				<span class="glyphicon glyphicon-pencil"></span> Original Message:
+				
+				<?php if($this->showMmails_MODEL->attachs): ?>
+				<button style="float:right;" class="btn btn-xs btn-default" onclick="bbe_bugs_scroll_to_full_mail_attachments_header();">
+					See Attachments
+					<span class="glyphicon glyphicon-chevron-down"></span>
+				</button>
+				<?php endif;?>
+			
+			</h5>
+			<pre id="bbe_bugs_email_body" class="bbe_bugs_email_body_no_border"><?php echo utf8_decode($this->showMmails_MODEL->text); ?><!-- this protects from unclosed comments --></pre>
+			<input type="hidden" id="reply_action_type">
+			<input type="hidden" id="bbe_bugs_email_id" value="<?php echo utf8_decode($this->showMmails_MODEL->id); ?>">
+			<input type="hidden" id="bbe_bugs_must_justify_msg_delete" value="<?php 
+				echo (
+						(stristr($this->showMmails_MODEL->log, "(Operation: reply)"))
+						|| (stristr($this->showMmails_MODEL->subject, "out of office"))
+						|| (stristr($this->showMmails_MODEL->subject, "PAYPAL ERROR -! URGENT !-"))
+						|| (stristr($this->showMmails_MODEL->subject, "Controllo del Feed di Tecnavia su"))
+						|| (stristr($this->showMmails_MODEL->subject, "ATTN: Important Notice"))
+						|| (stristr($this->showMmails_MODEL->subject, "E-Tearsheet status for"))
+						|| (stristr($this->showMmails_MODEL->text, "ver:" . md5("tecnavia_email_signature")))
+					) ? 0 : 1; 
+			?>">
+			
+			<?php if($this->showMmails_MODEL->attachs): ?>
+			<h5 id="bbe_bugs_full_mail_attachments_header"><span class="glyphicon glyphicon-paperclip"></span> Attachments:</h5>
+				<?php
+					$attachments = array();
+					foreach(explode(";", $this->showMmails_MODEL->attachs) as $attachment)
+					{
+						$attachment_url = "http://nm4.tecnavia.com/newsmemj/_showMails/attachs/{$this->showMmails_MODEL->id}/{$attachment}";
+						
+						$hash = date("Y-m-d_H-i-s", $this->showMmails_MODEL->time) . "_" . substr(md5($this->showMmails_MODEL->from . $this->showMmails_MODEL->time), 0, 8);
+						$new_url = BASE_URL . "email/mail-attach/download/hash/{$hash}/filename/" . urlencode($attachment);
+						$new_link = '<a href="'.$new_url.'" target="_blank" style="color:red;"> [[ NEW download link ]] </a>';
+						
+						$attachments[] = '<span class="glyphicon glyphicon-paperclip"></span> <a href="'.$attachment_url.'" target="_blank">'.$attachment.'</a> ' . $new_link;
+					}
+				?>
+<pre><?php echo implode("\r\n", $attachments); ?></pre>
+			<?php endif; ?>
+			
+		</div>
+	</div>
+	
+</div>
+

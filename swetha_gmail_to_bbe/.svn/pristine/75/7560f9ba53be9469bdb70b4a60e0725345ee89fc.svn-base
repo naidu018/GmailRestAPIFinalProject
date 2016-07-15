@@ -1,0 +1,18 @@
+<script type="text/javascript">
+$(document).ready(function(){
+
+	$("#my_input-x").bbe_autocomplete({
+		url: BASE_URL + "email/contacts/get-from-bbe/format/json",
+		is_extract_email: true
+	});
+
+});
+</script>
+	
+
+<div id="the-basics" style="margin: 5px; padding: 10px; background: red; height: 100px;">
+	<input id="my_input-x" type="text" style="width: 100%;">
+</div>
+
+
+

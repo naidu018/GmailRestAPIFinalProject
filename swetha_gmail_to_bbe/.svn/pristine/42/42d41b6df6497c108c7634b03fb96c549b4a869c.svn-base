@@ -1,0 +1,44 @@
+
+1) If title contains "Out of office", then user can delete without reason ----> (DONE!)
+
+2) Add a tag to emails sent from us to know if an email is a reply from a previous mail, 
+	in that case the user can delete without reason ----> (DONE!)
+
+3) Change "Original message" style while in "Read" mode 
+	(not grey background, because it doesn't look like the main email) ----> (DONE!)
+
+4) While assigning a paper, set psetup on change, if only 1 psetup is selected. 
+Keep menu open when assigning multiple papers only. ----> (DONE!)
+
+5) Bug fix: when removing all psetups from the dropdown, 
+I can't type anymore, just select by clicking  ----> (DONE!)
+
+6) Display deadline options using buttons, not a dropdown menu, 
+to make the selection more visible and immediately available   ----> (DONE!)
+
+7) On deadline set, automatically assign it to myself  ----> (DONE!)
+
+Add "Next shift" option on deadline selection (+8h)   ----> (DONE!)
+
+Other deadline options should be:
+Immediate [30m]
+ASAP [1h]
+When I have time [3h]
+End of shift [5PM on user's timezone]
+
+
+Use star symbol for assigned, not bold as current setting    ----> (DONE!)
+Use bold for "Not read" emails   ----> (DONE!)
+Move "Assigned time ago" on table to assigned user mouse over, instead of being always visible
+(too much info is already being displayed on the table)    ----> (DONE!)
+
+Add new "Priority" column on table
+(@Emily: please provide icon and color for each priority type - I would like to use bootstrap's icons if possible!)    ----> (DONE!)
+
+I think we might have to re-discuss the color system over. I had the feeling everyone was a bit confused. Current conventions are:
+Not assigned:
+Yellow after 10 minutes
+Red after 20 minutes
+Assigned
+Yellow if less than 2 hours from deadline
+Red when less than 1 hour is left         ----> (DONE!)
